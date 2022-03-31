@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { UberContext } from '../context/uberContext'
+import { UberContext } from "../context/uberContext";
 
 const style = {
   wrapper: ``,
@@ -10,11 +10,20 @@ const style = {
   svgContainer: `mx-1`,
   input: `my-2 rounded-2 p-2 outline-none border-none bg-transparent h-full w-full`,
   verticalLine: `w-0 h-[2rem] border-black border absolute z-10 left-[2.3rem] top-[2rem]`,
+  searchButton: `bg-black text-white m-4 py-2 text-center text-lg`,
 };
 
 const LocationSelector = () => {
   const [inFocus, setInFocus] = useState("from");
-  const { pickup, setPickup, dropoff, setDropoff} = useContext(UberContext)
+  const { pickup, setPickup, dropoff, setDropoff } = useContext(UberContext);
+
+  const [pickupInput, setPickupInput] = useState("");
+  const [dropoffInput, setDropoffInput] = useState("");
+
+  const handleSearch = () => {
+    setPickup(pickupInput)
+    setDropoff(dropoffInput)
+  }
 
   return (
     <div className={style.wrapper}>
@@ -39,8 +48,8 @@ const LocationSelector = () => {
           <input
             className={style.input}
             placeholder="Enter pickup location"
-            value={pickup}
-            onChange={(e) => setPickup(e.target.value)}
+            value={pickupInput}
+            onChange={(e) => setPickupInput(e.target.value)}
             onFocus={() => setInFocus("from")}
           />
         </div>
@@ -63,11 +72,12 @@ const LocationSelector = () => {
           <input
             className={style.input}
             placeholder="Where to?"
-            value={dropoff}
-            onChange={(e) => setDropoff(e.target.value)}
+            value={dropoffInput}
+            onChange={(e) => setDropoffInput(e.target.value)}
             onFocus={() => setInFocus("to")}
           />
         </div>
+        <button className={style.searchButton} onClick={() => handleSearch()}>Set up locations</button>
       </div>
     </div>
   );
