@@ -24,9 +24,7 @@ const RideSelector = () => {
     (async () => {
       try {
         const response = await fetch("api/db/getRideTypes");
-
         const data = await response.json();
-        console.log(data);
         setCarList(data.data);
       } catch (error) {
         console.error(error);
