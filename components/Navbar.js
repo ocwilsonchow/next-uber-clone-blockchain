@@ -1,10 +1,7 @@
-import Image from "next/image";
-import avatar from "../temp/avatar.jpg";
 import { BsPerson } from "react-icons/bs";
 import { useContext } from "react";
 import { UberContext } from "../context/uberContext";
 import { FaGithub } from "react-icons/fa";
-import { Button } from "@chakra-ui/button";
 
 const style = {
   wrapper: `h-18 w-full bg-black text-white flex md:justify-around items-center p-2`,
@@ -43,7 +40,11 @@ const Navbar = () => {
           </div>
         )}
 
-        <a href="https://github.com/ocwilsonchow/next-uber-clone-blockchain" target="_blank" rel="noreferrer">
+        <a
+          href="https://github.com/ocwilsonchow/next-uber-clone-blockchain"
+          target="_blank"
+          rel="noreferrer"
+        >
           <FaGithub />
         </a>
       </div>
