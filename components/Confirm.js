@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import RideSelector from "./RideSelector";
 import { UberContext } from "../context/uberContext";
+import { ethers } from "ethers";
 
 const style = {
   wrapper: `flex-1 h-full flex flex-col justify-between`,
@@ -14,11 +15,13 @@ const Confirm = () => {
     useContext(UberContext);
 
   const storeTripDetails = async (pickup, dropoff) => {
+
+    console.log(metamask)
     try {
-     await fetch('/api/db/saveTrips', {
-        method: 'POST',
+      await fetch("/api/db/saveTrips", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           pickupLocation: pickup,
@@ -27,22 +30,21 @@ const Confirm = () => {
           price: price,
           selectedRide: selectedRide,
         }),
-      })
+      });
 
+      console.log(price)
 
       await metamask.request({
-        method: 'eth_sendTransaction',
+        method: "eth_sendTransaction",
         params: [
           {
             from: currentAccount,
             to: process.env.NEXT_PUBLIC_UBER_ADDRESS,
-            gas: '0x7EF40',
-            value: ethers.utils.parseEther(price).hex,
-          }
-        ]
-      })
-
-
+            gas: '0x7EF40', // 520000 Gwei
+            value: ethers.utils.parseEther(price)._hex,
+          },
+        ],
+      });
     } catch (error) {
       console.log(error);
     }

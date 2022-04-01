@@ -181,7 +181,8 @@ export const UberProvider = ({ children }) => {
         price,
         setPrice,
         basePrice,
-        setBasePrice
+        setBasePrice,
+        metamask
       }}
     >
       {children}
