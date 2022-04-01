@@ -10,7 +10,7 @@ const style = {
   svgContainer: `mx-1`,
   input: `my-2 rounded-2 p-2 outline-none border-none bg-transparent h-full w-full`,
   verticalLine: `w-0 h-[2rem] border-black border absolute z-10 left-[2.3rem] top-[2rem]`,
-  searchButton: `bg-black text-white m-4 py-2 text-center text-lg`,
+  searchButton: `bg-black text-white mx-4 my-2 py-2 text-center text-lg`,
 };
 
 const LocationSelector = () => {

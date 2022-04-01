@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from "react";
-import { faker } from '@faker-js/faker'
+import { faker } from "@faker-js/faker";
 
 export const UberContext = createContext();
 
@@ -8,57 +8,84 @@ export const UberProvider = ({ children }) => {
   const [dropoff, setDropoff] = useState("");
   const [pickupCoordinates, setPickupCoordinates] = useState();
   const [dropoffCoordinates, setDropoffCoordinates] = useState();
-  const [currentAccount, setCurrentAccount] = useState()
+  const [currentAccount, setCurrentAccount] = useState();
+  const [currentUser, setCurrentUser] = useState();
+  const [selectedRide, setSelectedRide] = useState([]);
+  const [price, setPrice] = useState();
+  const [basePrice, setBasePrice] = useState();
 
-  let metamask
+  let metamask;
 
-  if (typeof window !== 'undefined') {
-    metamask = window.ethereum
+  if (typeof window !== "undefined") {
+    metamask = window.ethereum;
   }
 
   useEffect(() => {
-    console.log("Checking if account connected")
-    checkIfWalletIsConnected()
-  }, [])
+    checkIfWalletIsConnected();
+  }, []);
 
+  useEffect(() => {
+    if (!currentAccount) return;
 
+    requestToGetCurrentUsersInfo(currentAccount);
+  }, [currentAccount]);
+
+   useEffect(() => {
+    if (!pickupCoordinates || !dropoffCoordinates) return
+    ;(async () => {
+      try {
+        const response = await fetch('/api/map/getDuration', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            pickupCoordinates: `${pickupCoordinates[0]},${pickupCoordinates[1]}`,
+            dropoffCoordinates: `${dropoffCoordinates[0]},${dropoffCoordinates[1]}`,
+          }),
+        })
+
+        const data = await response.json()
+        setBasePrice(Math.round(await data.data))
+      } catch (error) {
+        console.error(error)
+      }
+    })()
+  }, [pickupCoordinates, dropoffCoordinates])
 
   const checkIfWalletIsConnected = async () => {
-    metamask = window.ethereum
-
+    metamask = window.ethereum;
     try {
-      console.log("trying to look for account")
       const addressArray = await window.ethereum.request({
-        method: 'eth_accounts'
-      })
+        method: "eth_accounts",
+      });
 
       if (addressArray.length > 0) {
-        setCurrentAccount(addressArray[0])
-        requestToCreateUserOnSanity(addressArray[0])
+        setCurrentAccount(addressArray[0]);
+        requestToCreateUserOnSanity(addressArray[0]);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const connectWallet = async () => {
-    if (!window.ethereum) return
+    if (!window.ethereum) return;
     try {
       const addressArray = await window.ethereum.request({
-        method: 'eth_requestAccounts'
-      })
+        method: "eth_requestAccounts",
+      });
 
-      console.log(addressArray[0])
+      console.log(addressArray[0]);
 
       if (addressArray.length > 0) {
-        setCurrentAccount(addressArray[0])
-        requestToCreateUserOnSanity(addressArray[0])
+        setCurrentAccount(addressArray[0]);
+        requestToCreateUserOnSanity(addressArray[0]);
       }
-
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const createLocationCoordinatePromise = (locationName, locationType) => {
     return new Promise(async (resolve, reject) => {
@@ -106,23 +133,35 @@ export const UberProvider = ({ children }) => {
     } else return;
   }, [pickup, dropoff]);
 
-  const requestToCreateUserOnSanity = async address => {
-    if (!window.ethereum) return
+  const requestToCreateUserOnSanity = async (address) => {
+    if (!window.ethereum) return;
     try {
-      await fetch('/api/db/createUser', {
-        method: 'POST',
+      await fetch("/api/db/createUser", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           userWalletAddress: address,
           name: faker.name.findName(),
-        })
-      })
+        }),
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
+
+  const requestToGetCurrentUsersInfo = async (walletAddress) => {
+    try {
+      const response = await fetch(
+        `/api/db/getUserInfo?walletAddress=${walletAddress}`
+      );
+      const data = await response.json();
+      setCurrentUser(data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <UberContext.Provider
@@ -136,7 +175,13 @@ export const UberProvider = ({ children }) => {
         dropoffCoordinates,
         setDropoffCoordinates,
         connectWallet,
-        currentAccount
+        currentAccount,
+        selectedRide,
+        setSelectedRide,
+        price,
+        setPrice,
+        basePrice,
+        setBasePrice
       }}
     >
       {children}

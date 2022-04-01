@@ -1,12 +1,13 @@
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { UberContext } from "../context/uberContext";
 
 const style = {
   wrapper: `h-full flex flex-col `,
   title: `text-gray-500 text-center text-xs py-2 border-b`,
   carList: `flex flex-col flex-1 overflow-auto`,
-  car: `flex py-1 px-3 items-center border-1 border-white`,
-  selectedCar: `border-2 border-black flex p-3 m-2 items-center`,
+  car: `flex py-1 px-3 items-center border-2 m-1 border-white`,
+  selectedCar: `border-2 border-black flex py-1 px-3 m-1 items-center`,
   carImage: `h-15`,
   carDetails: `ml-2 flex-1`,
   service: `font-medium`,
@@ -15,10 +16,11 @@ const style = {
   price: `mr-[0.8rem]`,
 };
 
-const basePrice = 1500;
+
 
 const RideSelector = () => {
   const [carList, setCarList] = useState([]);
+  const { setSelectedRide, selectedRide, setPrice, basePrice } = useContext(UberContext);
 
   useEffect(() => {
     (async () => {
@@ -26,6 +28,7 @@ const RideSelector = () => {
         const response = await fetch("api/db/getRideTypes");
         const data = await response.json();
         setCarList(data.data);
+        setSelectedRide(data.data[0]);
       } catch (error) {
         console.error(error);
       }
@@ -37,7 +40,20 @@ const RideSelector = () => {
       <div className={style.title}>Choose a ride, or swipe up for more</div>
       <div className={style.carList}>
         {carList.map((car, index) => (
-          <div className={style.car} key={index}>
+          <div
+            className={`${
+              selectedRide?.service === car?.service
+                ? style.selectedCar
+                : style.car
+            }`}
+            key={index}
+            onClick={() => {
+              setSelectedRide(car);
+              setPrice(
+                ((basePrice / 10 ** 4.5) * car.priceMultiplier).toFixed(5)
+              );
+            }}
+          >
             <img
               src={car.iconUrl}
               className={style.carImage}
@@ -50,7 +66,7 @@ const RideSelector = () => {
             </div>
             <div className={style.priceContainer}>
               <div className={style.price}>
-                {((basePrice / 10 ** 5) * car.priceMultiplier).toFixed(5)}
+                {((basePrice / 10 ** 5) * car.priceMultiplier).toFixed(5)} ETH
               </div>
             </div>
           </div>
