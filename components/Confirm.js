@@ -8,15 +8,22 @@ const style = {
   rideSelectorContainer: `h-full flex flex-col overflow-auto`,
   confirmButtonContainer: `border-t-2 cursor-pointer z-10`,
   confirmButton: `bg-black text-white m-4 py-2 text-center text-lg`,
+  info: `text-gray-500 text-center text-xs pb-4`,
 };
 
 const Confirm = () => {
-  const { currentAccount, pickup, dropoff, price, selectedRide, metamask } =
-    useContext(UberContext);
+  const {
+    currentAccount,
+    pickup,
+    dropoff,
+    price,
+    selectedRide,
+    metamask,
+    connectWallet,
+  } = useContext(UberContext);
 
   const storeTripDetails = async (pickup, dropoff) => {
-
-    console.log(metamask)
+    console.log(metamask);
     try {
       await fetch("/api/db/saveTrips", {
         method: "POST",
@@ -32,7 +39,7 @@ const Confirm = () => {
         }),
       });
 
-      console.log(price)
+      console.log(price);
 
       await metamask.request({
         method: "eth_sendTransaction",
@@ -40,7 +47,7 @@ const Confirm = () => {
           {
             from: currentAccount,
             to: process.env.NEXT_PUBLIC_UBER_ADDRESS,
-            gas: '0x7EF40', // 520000 Gwei
+            gas: "0x7EF40", // 520000 Gwei
             value: ethers.utils.parseEther(price)._hex,
           },
         ],
@@ -56,12 +63,25 @@ const Confirm = () => {
         <RideSelector />
       </div>
       <div className={style.confirmButtonContainer}>
-        <div
-          className={style.confirmButton}
-          onClick={() => storeTripDetails(pickup, dropoff)}
-        >
-          Confirm {selectedRide.service || "UberX"}
-        </div>
+        {currentAccount && (
+          <div
+            className={style.confirmButton}
+            onClick={() => storeTripDetails(pickup, dropoff)}
+          >
+            Confirm {selectedRide.service || "UberX"}
+          </div>
+        )}
+        {!currentAccount && (
+          <>
+            <div
+              className={style.confirmButton}
+              onClick={() => connectWallet()}
+            >
+              Connect Wallet
+            </div>
+            <div className={style.info}>To use this service, you need to first connect your browser to a wallet.</div>
+          </>
+        )}
       </div>
     </div>
   );

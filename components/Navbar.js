@@ -3,6 +3,8 @@ import avatar from "../temp/avatar.jpg";
 import { BsPerson } from "react-icons/bs";
 import { useContext } from "react";
 import { UberContext } from "../context/uberContext";
+import { FaGithub } from "react-icons/fa";
+import { Button } from "@chakra-ui/button";
 
 const style = {
   wrapper: `h-18 w-full bg-black text-white flex md:justify-around items-center p-2`,
@@ -31,7 +33,7 @@ const Navbar = () => {
         <div className={style.menuItem}>Help</div>
 
         {currentAccount ? (
-          <div className={style.loginButton} >
+          <div className={style.loginButton}>
             {currentAccount.slice(0, 6)}...{currentAccount.slice(39)}
           </div>
         ) : (
@@ -40,14 +42,10 @@ const Navbar = () => {
             <span className={style.loginText}>Log in</span>
           </div>
         )}
-        <div className={style.userImageContainer}>
-          <Image
-            className={style.userImage}
-            src={avatar}
-            width={40}
-            height={40}
-          />
-        </div>
+
+        <a href="https://github.com/ocwilsonchow/next-uber-clone-blockchain" target="_blank">
+          <FaGithub />
+        </a>
       </div>
     </div>
   );
