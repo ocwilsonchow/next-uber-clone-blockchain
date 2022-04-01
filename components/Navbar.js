@@ -31,11 +31,11 @@ const Navbar = () => {
         <div className={style.menuItem}>Help</div>
 
         {currentAccount ? (
-          <div>
+          <div className={style.loginButton} >
             {currentAccount.slice(0, 6)}...{currentAccount.slice(39)}
           </div>
         ) : (
-          <div className={style.loginButton}>
+          <div className={style.loginButton} onClick={() => connectWallet()}>
             <BsPerson />
             <span className={style.loginText}>Log in</span>
           </div>
