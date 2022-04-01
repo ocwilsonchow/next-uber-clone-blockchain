@@ -43,7 +43,7 @@ const Navbar = () => {
           </div>
         )}
 
-        <a href="https://github.com/ocwilsonchow/next-uber-clone-blockchain" target="_blank">
+        <a href="https://github.com/ocwilsonchow/next-uber-clone-blockchain" target="_blank" rel="noreferrer">
           <FaGithub />
         </a>
       </div>
